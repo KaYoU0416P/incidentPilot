@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: incident-pilot
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://127.0.0.1:15432/incident_pilot}
+    username: ${POSTGRES_USER:incident_pilot}
+    password: ${POSTGRES_PASSWORD:incident_pilot_dev}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:16379}
+      timeout: 2s
+      repositories:
+        enabled: false
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

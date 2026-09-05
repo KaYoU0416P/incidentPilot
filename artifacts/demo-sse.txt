@@ -1,0 +1,8 @@
+event:started
+id:1
+data:{"payload":{"topK":3,"mode":"hybrid"},"sequence":1,"requestId":"963baa7d-4faa-46ae-a924-f52a31827684"}
+
+event:completed
+id:2
+data:{"payload":{"answer":"证据不足，无法确定该 504 的具体根因。根据 [E1]，网关 504 且下游仍在执行，建议排查步骤如下：\n\n1. 核对入口超时配置与下游实际耗时（[E1]）。\n2. 检查调用链的 p95/p99，确认是否为长尾请求超时（[E1]）。\n3. 设置由外向内合理的截止时间（deadline），取消已超时的无效工作（[E1]）。\n4. 限制下游重试行为，避免重复执行（[E1]）。\n5. 不要将所有 504 直接归因于数据库；仅当证据指向 DB 时再深挖（[E1]）。\n\n其他证据（[E2] DNS、[E3] 死锁）与本问题的技术特征无直接关联，仅在交叉验证时作为排除项参考。","citations":[],"evidenceStatus":"INSUFFICIENT","retriever":"hybrid-rrf-k60","latencyMs":2066},"sequence":2,"requestId":"963baa7d-4faa-46ae-a924-f52a31827684"}
+

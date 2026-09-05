@@ -1,0 +1,1673 @@
+{
+  "id" : "8919e8e6-10b8-43cd-9d5a-384c3206f4bf",
+  "createdAt" : "2026-09-05T09:39:10.315504Z",
+  "datasetVersion" : "demo-v1",
+  "limitations" : "Synthetic 6-document dataset; 12 answerable and 2 no-answer cases. Binary relevance; no-answer metrics excluded. Small-sample functional comparison, not production benchmark.",
+  "configuration" : "text-embedding-v4/1024; schema V3; cosine; planner-selected exact or HNSW; RRF k=60; lightweight rerank v1; topK=3; candidates=20; sequential calls",
+  "summaries" : [ {
+    "mode" : "dense",
+    "answerableCases" : 12,
+    "recallAt3" : 1.0,
+    "mrrAt3" : 1.0,
+    "ndcgAt3" : 1.0,
+    "p50Ms" : 160,
+    "p95Ms" : 182
+  }, {
+    "mode" : "lexical",
+    "answerableCases" : 12,
+    "recallAt3" : 0.5,
+    "mrrAt3" : 0.5,
+    "ndcgAt3" : 0.5,
+    "p50Ms" : 0,
+    "p95Ms" : 1
+  }, {
+    "mode" : "hybrid",
+    "answerableCases" : 12,
+    "recallAt3" : 1.0,
+    "mrrAt3" : 1.0,
+    "ndcgAt3" : 1.0,
+    "p50Ms" : 172,
+    "p95Ms" : 406
+  }, {
+    "mode" : "hybrid-rerank",
+    "answerableCases" : 12,
+    "recallAt3" : 1.0,
+    "mrrAt3" : 1.0,
+    "ndcgAt3" : 1.0,
+    "p50Ms" : 169,
+    "p95Ms" : 354
+  } ],
+  "cases" : [ {
+    "caseId" : "case-1-1",
+    "mode" : "dense",
+    "query" : "DB_POOL_EXHAUSTED",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.5284135341644325
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.5184470702143352
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.4198576211929351
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 160
+  }, {
+    "caseId" : "case-1-2",
+    "mode" : "dense",
+    "query" : "支付服务发布后错误率上升，数据库连接都被占住了怎么排查？",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.751981079578405
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.6517613141679085
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.5968354281933991
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 168
+  }, {
+    "caseId" : "case-2-1",
+    "mode" : "dense",
+    "query" : "DEADLOCK_DETECTED",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.573164692739885
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.4515273109533584
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.42029542205957116
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 136
+  }, {
+    "caseId" : "case-2-2",
+    "mode" : "dense",
+    "query" : "库存事务互相等待锁导致失败应该怎么处理？",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.7760544090206191
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.5811508547573783
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.4977987409950062
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 180
+  }, {
+    "caseId" : "case-3-1",
+    "mode" : "dense",
+    "query" : "CACHE_STAMPEDE",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.5667993604899687
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.4001736342389488
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.37919828195613126
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 143
+  }, {
+    "caseId" : "case-3-2",
+    "mode" : "dense",
+    "query" : "热门商品缓存一过期数据库就被打满如何处理？",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.6697720682892766
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.6135298108703248
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.5858439002409219
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 133
+  }, {
+    "caseId" : "case-4-1",
+    "mode" : "dense",
+    "query" : "UPSTREAM_TIMEOUT",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.5767113738272006
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.4187914382691049
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.40326391448784293
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 162
+  }, {
+    "caseId" : "case-4-2",
+    "mode" : "dense",
+    "query" : "网关报504但下游还在继续执行是什么问题？",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.7781679034233093
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.5458506508425075
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.510712979946977
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 132
+  }, {
+    "caseId" : "case-5-1",
+    "mode" : "dense",
+    "query" : "OUT_OF_MEMORY",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.5542999505996743
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.41435814414274497
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.4109186301456659
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 182
+  }, {
+    "caseId" : "case-5-2",
+    "mode" : "dense",
+    "query" : "报表服务Full GC以后堆内存仍不下降怎么查？",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.7848150262346862
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.5156792094898704
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.5089922536620828
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 174
+  }, {
+    "caseId" : "case-6-1",
+    "mode" : "dense",
+    "query" : "DNS_LOOKUP_FAILED",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.7050114308307858
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.38367375038109786
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.3636746189788269
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 171
+  }, {
+    "caseId" : "case-6-2",
+    "mode" : "dense",
+    "query" : "通知服务提示UnknownHostException先检查什么？",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.811213778446882
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.4952310329400297
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.47846830276221675
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 155
+  }, {
+    "caseId" : "no-answer-1",
+    "mode" : "dense",
+    "query" : "公司明年的招聘预算是多少？",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.28388397193646653
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.2735549644497063
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.25897765931420513
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 176
+  }, {
+    "caseId" : "no-answer-2",
+    "mode" : "dense",
+    "query" : "WEATHER_FORECAST_TOMORROW",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "pgvector-dense",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.2758490957066697
+      }, {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.22856007644176068
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.21006511389821125
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 146
+  }, {
+    "caseId" : "case-1-1",
+    "mode" : "lexical",
+    "query" : "DB_POOL_EXHAUSTED",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.26832976937294006
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-1-2",
+    "mode" : "lexical",
+    "query" : "支付服务发布后错误率上升，数据库连接都被占住了怎么排查？",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : 0.0,
+      "mrrAtK" : 0.0,
+      "ndcgAtK" : 0.0
+    },
+    "latencyMs" : 1
+  }, {
+    "caseId" : "case-2-1",
+    "mode" : "lexical",
+    "query" : "DEADLOCK_DETECTED",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.09910321980714798
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-2-2",
+    "mode" : "lexical",
+    "query" : "库存事务互相等待锁导致失败应该怎么处理？",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : 0.0,
+      "mrrAtK" : 0.0,
+      "ndcgAtK" : 0.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-3-1",
+    "mode" : "lexical",
+    "query" : "CACHE_STAMPEDE",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.18784232437610626
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-3-2",
+    "mode" : "lexical",
+    "query" : "热门商品缓存一过期数据库就被打满如何处理？",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : 0.0,
+      "mrrAtK" : 0.0,
+      "ndcgAtK" : 0.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-4-1",
+    "mode" : "lexical",
+    "query" : "UPSTREAM_TIMEOUT",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.33010074496269226
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-4-2",
+    "mode" : "lexical",
+    "query" : "网关报504但下游还在继续执行是什么问题？",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : 0.0,
+      "mrrAtK" : 0.0,
+      "ndcgAtK" : 0.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-5-1",
+    "mode" : "lexical",
+    "query" : "OUT_OF_MEMORY",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.26832976937294006
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-5-2",
+    "mode" : "lexical",
+    "query" : "报表服务Full GC以后堆内存仍不下降怎么查？",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : 0.0,
+      "mrrAtK" : 0.0,
+      "ndcgAtK" : 0.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-6-1",
+    "mode" : "lexical",
+    "query" : "DNS_LOOKUP_FAILED",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.4724791944026947
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-6-2",
+    "mode" : "lexical",
+    "query" : "通知服务提示UnknownHostException先检查什么？",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : 0.0,
+      "mrrAtK" : 0.0,
+      "ndcgAtK" : 0.0
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "no-answer-1",
+    "mode" : "lexical",
+    "query" : "公司明年的招聘预算是多少？",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "no-answer-2",
+    "mode" : "lexical",
+    "query" : "WEATHER_FORECAST_TOMORROW",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "postgres-lexical",
+      "chunks" : [ ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 0
+  }, {
+    "caseId" : "case-1-1",
+    "mode" : "hybrid",
+    "query" : "DB_POOL_EXHAUSTED",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.03278688524590164
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 166
+  }, {
+    "caseId" : "case-1-2",
+    "mode" : "hybrid",
+    "query" : "支付服务发布后错误率上升，数据库连接都被占住了怎么排查？",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 162
+  }, {
+    "caseId" : "case-2-1",
+    "mode" : "hybrid",
+    "query" : "DEADLOCK_DETECTED",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.03278688524590164
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 224
+  }, {
+    "caseId" : "case-2-2",
+    "mode" : "hybrid",
+    "query" : "库存事务互相等待锁导致失败应该怎么处理？",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 168
+  }, {
+    "caseId" : "case-3-1",
+    "mode" : "hybrid",
+    "query" : "CACHE_STAMPEDE",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.03278688524590164
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 175
+  }, {
+    "caseId" : "case-3-2",
+    "mode" : "hybrid",
+    "query" : "热门商品缓存一过期数据库就被打满如何处理？",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 406
+  }, {
+    "caseId" : "case-4-1",
+    "mode" : "hybrid",
+    "query" : "UPSTREAM_TIMEOUT",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.03278688524590164
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 144
+  }, {
+    "caseId" : "case-4-2",
+    "mode" : "hybrid",
+    "query" : "网关报504但下游还在继续执行是什么问题？",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 172
+  }, {
+    "caseId" : "case-5-1",
+    "mode" : "hybrid",
+    "query" : "OUT_OF_MEMORY",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.03278688524590164
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 157
+  }, {
+    "caseId" : "case-5-2",
+    "mode" : "hybrid",
+    "query" : "报表服务Full GC以后堆内存仍不下降怎么查？",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 174
+  }, {
+    "caseId" : "case-6-1",
+    "mode" : "hybrid",
+    "query" : "DNS_LOOKUP_FAILED",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.03278688524590164
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 172
+  }, {
+    "caseId" : "case-6-2",
+    "mode" : "hybrid",
+    "query" : "通知服务提示UnknownHostException先检查什么？",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 175
+  }, {
+    "caseId" : "no-answer-1",
+    "mode" : "hybrid",
+    "query" : "公司明年的招聘预算是多少？",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 181
+  }, {
+    "caseId" : "no-answer-2",
+    "mode" : "hybrid",
+    "query" : "WEATHER_FORECAST_TOMORROW",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "hybrid-rrf-k60",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.01639344262295082
+      }, {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.016129032258064516
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.015873015873015872
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 170
+  }, {
+    "caseId" : "case-1-1",
+    "mode" : "hybrid-rerank",
+    "query" : "DB_POOL_EXHAUSTED",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 1.0
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.09838709677419355
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.09682539682539681
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 152
+  }, {
+    "caseId" : "case-1-2",
+    "mode" : "hybrid-rerank",
+    "query" : "支付服务发布后错误率上升，数据库连接都被占住了怎么排查？",
+    "relevant" : [ "658d8678-f2c7-4392-bbd6-0141ab8c7a85" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.488
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.3887741935483871
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.2896507936507936
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 180
+  }, {
+    "caseId" : "case-2-1",
+    "mode" : "hybrid-rerank",
+    "query" : "DEADLOCK_DETECTED",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 1.0
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.09838709677419355
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.09682539682539681
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 159
+  }, {
+    "caseId" : "case-2-2",
+    "mode" : "hybrid-rerank",
+    "query" : "库存事务互相等待锁导致失败应该怎么处理？",
+    "relevant" : [ "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.33333333333333337
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.3301075268817204
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.23506944444444447
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 185
+  }, {
+    "caseId" : "case-3-1",
+    "mode" : "hybrid-rerank",
+    "query" : "CACHE_STAMPEDE",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 1.0
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.09838709677419355
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.09682539682539681
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 136
+  }, {
+    "caseId" : "case-3-2",
+    "mode" : "hybrid-rerank",
+    "query" : "热门商品缓存一过期数据库就被打满如何处理？",
+    "relevant" : [ "e18bee54-e8e0-4bb1-8dbb-28441c7e8985" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.45263157894736844
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.31400809716599193
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.28098471986417656
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 172
+  }, {
+    "caseId" : "case-4-1",
+    "mode" : "hybrid-rerank",
+    "query" : "UPSTREAM_TIMEOUT",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 1.0
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.09838709677419355
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.09682539682539681
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 173
+  }, {
+    "caseId" : "case-4-2",
+    "mode" : "hybrid-rerank",
+    "query" : "网关报504但下游还在继续执行是什么问题？",
+    "relevant" : [ "2e76515b-83ad-42bb-9e54-cfabe494f946" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.38823529411764707
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.2847426470588236
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.1967741935483871
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 169
+  }, {
+    "caseId" : "case-5-1",
+    "mode" : "hybrid-rerank",
+    "query" : "OUT_OF_MEMORY",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 1.0
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.09838709677419355
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.09682539682539681
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 158
+  }, {
+    "caseId" : "case-5-2",
+    "mode" : "hybrid-rerank",
+    "query" : "报表服务Full GC以后堆内存仍不下降怎么查？",
+    "relevant" : [ "27d016f4-83da-4def-9901-743b85b63359" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.5294117647058824
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.28776844070961716
+      }, {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.24383301707779886
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 222
+  }, {
+    "caseId" : "case-6-1",
+    "mode" : "hybrid-rerank",
+    "query" : "DNS_LOOKUP_FAILED",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 1.0
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.09838709677419355
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.09682539682539681
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 354
+  }, {
+    "caseId" : "case-6-2",
+    "mode" : "hybrid-rerank",
+    "query" : "通知服务提示UnknownHostException先检查什么？",
+    "relevant" : [ "33898f86-b3b8-4b14-bf11-652e0344f959" ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.5636363636363637
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.3422287390029326
+      }, {
+        "sourceId" : "9f87777b-e799-4a21-8bef-40aa12745fe6",
+        "chunkId" : "6e2ee1ee-3498-45b3-92e6-32cf82f85d4a",
+        "content" : "inventory-service DEADLOCK_DETECTED SQLSTATE 40P01 lock order. 演示手册：库存扣减出现数据库死锁，两个事务以相反顺序锁定 SKU。检查死锁日志和涉及的 SQL，按 SKU ID 升序获取锁，缩短事务，失败后有界重试。该故障不是支付服务连接池耗尽。",
+        "sourceLocator" : "demo://runbooks/inventory-lock",
+        "score" : 0.3360795454545455
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : 1.0,
+      "mrrAtK" : 1.0,
+      "ndcgAtK" : 1.0
+    },
+    "latencyMs" : 168
+  }, {
+    "caseId" : "no-answer-1",
+    "mode" : "hybrid-rerank",
+    "query" : "公司明年的招聘预算是多少？",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "08f88c3c-246f-47eb-80da-1d8fe67ead3a",
+        "chunkId" : "658d8678-f2c7-4392-bbd6-0141ab8c7a85",
+        "content" : "payment-service v3.2.1 DB_POOL_EXHAUSTED SQLTransientConnectionException HikariPool connection timeout. 演示事故：支付服务在 v3.2.1 发布后 5xx 增加，Hikari 活跃连接达到上限，等待队列增长。变更将外部风控 HTTP 调用移入数据库事务，导致连接被长时间占用。排查顺序：核对发布时间、观察 Hikari active/pending、检查慢事务与外部请求延迟。先将外部调用移出事务或回退相关变更，经授权才能执行回滚。不要直接扩大连接池掩盖问题。",
+        "sourceLocator" : "demo://runbooks/payment-pool",
+        "score" : 0.2
+      }, {
+        "sourceId" : "a78637ff-bd75-45eb-87f9-df1020f62552",
+        "chunkId" : "27d016f4-83da-4def-9901-743b85b63359",
+        "content" : "report-service OUT_OF_MEMORY Java heap space retained objects unbounded cache. 演示事故：报表服务堆使用持续增长，Full GC 后占用不下降。原因是无上限本地缓存保留大报表对象。对比堆转储的 retained size 与引用链，给缓存增加大小与过期策略，限制单报表大小。不得声称单纯增加 Xmx 已根治。",
+        "sourceLocator" : "demo://runbooks/memory-leak",
+        "score" : 0.1967741935483871
+      }, {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.19365079365079363
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 179
+  }, {
+    "caseId" : "no-answer-2",
+    "mode" : "hybrid-rerank",
+    "query" : "WEATHER_FORECAST_TOMORROW",
+    "relevant" : [ ],
+    "result" : {
+      "retrieverName" : "hybrid-lightweight-rerank-v1",
+      "chunks" : [ {
+        "sourceId" : "4de72962-a176-4296-9fd8-e01e2b994da5",
+        "chunkId" : "33898f86-b3b8-4b14-bf11-652e0344f959",
+        "content" : "notification-service DNS_LOOKUP_FAILED UnknownHostException DNS resolver. 演示手册：通知服务访问邮件供应商失败，异常为 UnknownHostException。检查域名、DNS resolver、网络配置及解析缓存；对比直接解析结果和服务端 DNS 设置。尚未建立 TCP 连接时，先不要排查 TLS 证书。",
+        "sourceLocator" : "demo://runbooks/dns-failure",
+        "score" : 0.2
+      }, {
+        "sourceId" : "c9f0da9e-ccb4-436c-a68d-f9f0db5fe5fc",
+        "chunkId" : "e18bee54-e8e0-4bb1-8dbb-28441c7e8985",
+        "content" : "catalog-service CACHE_STAMPEDE Redis cache miss hot key TTL. 演示手册：热点商品缓存同一时间到期，大量请求同时回源，数据库 CPU 增高。检查缓存命中率和热点 key 过期时间；使用请求合并、带抖动 TTL 与热点预热。Redis 本身可用不代表不存在缓存击穿。",
+        "sourceLocator" : "demo://runbooks/redis-cache",
+        "score" : 0.1967741935483871
+      }, {
+        "sourceId" : "d3e99072-2dbf-4ef6-89d1-dd3a0be90119",
+        "chunkId" : "2e76515b-83ad-42bb-9e54-cfabe494f946",
+        "content" : "gateway-service UPSTREAM_TIMEOUT HTTP 504 read timeout upstream. 演示手册：网关返回 504，但下游服务仍在处理请求。核对入口超时与下游耗时，检查调用链 p95/p99，设置由外向内合理的截止时间，取消无效工作并限制重试。不要把所有 504 直接归因于数据库。",
+        "sourceLocator" : "demo://runbooks/gateway-timeout",
+        "score" : 0.19365079365079363
+      } ]
+    },
+    "metrics" : {
+      "recallAtK" : null,
+      "mrrAtK" : null,
+      "ndcgAtK" : null
+    },
+    "latencyMs" : 139
+  } ]
+}

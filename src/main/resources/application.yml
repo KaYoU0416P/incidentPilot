@@ -21,6 +21,23 @@ spring:
   flyway:
     enabled: true
 
+incidentpilot:
+  agent:
+    max-steps: 5
+    total-budget: 20s
+    tool-timeout: 6s
+    answer-reserve: 8s
+    context-chars: 6000
+    fact-chars: 600
+    fact-lookback: 90d
+  reliability:
+    run-retention: 1h
+    rate-permits: 20
+    rate-window: 60s
+    max-concurrent: 4
+    concurrency-ttl: 2m
+    sse-timeout: ${INCIDENTPILOT_SSE_TIMEOUT:35s}
+
 management:
   endpoints:
     web:
@@ -29,3 +46,10 @@ management:
   endpoint:
     health:
       show-details: always
+
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+
+logging:
+  pattern:
+    level: "%5p [requestId=%X{requestId:-none}]"

@@ -64,3 +64,36 @@ Dense、Lexical 各返回独立排名；RRF 使用 `score(d)=sum(1/(k+rank_i(d))
 ## 变更登记模板
 
 每次修改检索策略时追加：问题、变更、假设、数据集版本、对照组、指标结果、是否保留。当前尚无真实评测结果，不声明准确率或性能提升。
+
+
+## Phase 1 模型接入（2026-09-05）
+
+使用 `spring-ai-openai` 2.0.1，通过显式 `OpenAiChatModel.builder().options(...)` 和 `OpenAiEmbeddingModel.builder().options(...)` 分别构造模型。2.0.1 使用官方 Java SDK，base URL 包含 API 前缀，不采用 1.x 的 completions-path 配置。DeepSeek 为 `https://api.deepseek.com`，百炼为已实测的 `https://dashscope.aliyuncs.com/compatible-mode/v1`，两者密钥独立。
+
+`models` profile 从本地 `.env`（properties 格式）或环境变量读取配置；默认基础设施启动不创建外部模型。Chat baseline 关闭 thinking、限制输出；模型请求设置 30 秒超时和 0 次自动重试，避免默认重试放大延迟与费用。
+
+领域通过项目自有 `TextEmbedder` 和 `AnswerGenerator` 接口调用适配器，不接收 Spring AI DTO。Embedding 每批最多 10 条，响应按 index 恢复输入顺序，验证数量、维度、有限数与非零向量。此层仅产生向量，不负责数据库事务或检索排序；数据库写回与 Dense Retriever 在下一步实现。Chat 只接收已构造的指令和用户文本，不代替用户要手敲的 Context Assembly。
+
+验证包括本地 HTTP 合约测试（独立密钥、路径、请求参数、分批、非法响应）、显式启用的真实模型测试、基础应用启动和依赖健康 HTTP。测试输出不记录密钥或模型隐式思维。
+
+核对来源（页面标记 Spring AI Parent 2.0.1，构建再校验实际依赖）：
+- https://docs.spring.io/spring-ai/docs/current/api/org/springframework/ai/openai/OpenAiChatModel.html
+- https://docs.spring.io/spring-ai/docs/current/api/org/springframework/ai/openai/OpenAiEmbeddingModel.html
+- https://docs.spring.io/spring-ai/docs/current/api/org/springframework/ai/openai/OpenAiChatOptions.html
+- https://docs.spring.io/spring-ai/reference/api/embeddings/openai-embeddings.html
+- https://help.aliyun.com/zh/model-studio/text-embedding-synchronous-api
+
+## 向量入库边界（2026-09-05 加速交付）
+
+保留用户核心手敲，Agent 完成入库基础设施。新增 V2 将 embedding 固定为 vector(1024)，记录 embedding_model 并建立 cosine HNSW。迁移前检查已有非空向量；不改 V1、不清理用户数据。
+
+DocumentEmbeddingService 读取单文档 chunk 快照，在数据库事务外调用 TextEmbedder，再以短事务锁定 document、核对 content_hash，并批量写回该快照的 chunk。任何内容变化或 chunk 更新数量不匹配都回滚，避免外部调用期间文档被替换后写错向量。相同模型下已全部索引的文档跳过模型调用。入口禁止加入已有事务，保证模型请求不会持有调用方数据库事务。固定模型为 text-embedding-v4，维度 1024。
+
+
+下一核心 PgVectorDenseRetriever：通过 TextEmbedder 生成 query vector，参数化 SQL 对相同 embedding_model 的非空向量执行 cosine TopK，按 distance 升序返回，score 映射为 1-distance；同时返回 document ID、chunk ID、正文和来源。TopK 设置 MVP 上限 100。此阶段不声称 HNSW 提升召回，不标记查询为强制 exact；后续 Evaluation 分开保存 exact 与 ANN 的查询配置。
+
+## 加速交付执行范围（用户 2026-09-05 授权）
+
+用户已将剩余核心实现交给 Agent，保留既有手敲代码并集中交付后讲解。先完成 Dense RAG HTTP 闭环、Lexical/RRF 与固定演示语料上的评测，逐步编译验证；不把模拟语料声称为生产数据。
+
+Context Assembly 固定字符预算 12000，单条最多 2500 字符，证据编号 E1...En。回答提示要求只依据证据、引用 [E编号]，证据不足明确回答。校验器只证明引用编号属于本次上下文，不证明事实语义正确；无引用或未知引用时降级，响应保留真实证据和状态。

@@ -88,6 +88,39 @@ READ
 
 ## 5. 用户学习与代码分工
 
+> 2026-09-05 最新用户授权：用户完成 Dense Retriever 后明确“全部交给你了”。剩余核心也由 Agent 直接实现、验证，优先可演示交付和真实简历成果；下述手敲流程保留为历史学习约定，不再作为继续实现的等待条件。
+
+### 2026-09-05 加速交付与学习状态
+
+从 PostgreSQL + pgvector 的 Dense Retrieval 实现开始，到项目 MVP、演示、评测、文档和简历包装完成，后续代码统一由 Agent 直接实现并真实验证。用户不再等待逐段 Pair Programming；项目完成后再按完整调用链集中学习整个项目。
+
+当前学习标记：
+
+- [x] 已看懂并手敲：框架无关的 Retrieval 核心契约，包括 `RetrievalQuery`、`RetrievedChunk`、`RetrievalResult`、`Retriever`。
+- [x] 已看懂并手敲：`PgVectorDenseRetriever` 的最小核心流程，即查询文本生成向量、pgvector cosine TopK、结果映射。
+- [x] 已讲解并理解基础结构：模型配置的 YAML 层级、`${环境变量:默认值}`、profile、`@Configuration`、`@Bean`、依赖注入、DeepSeek Chat 与百炼 Embedding 分工。
+- [ ] 项目完成后集中学习：向量事务外计算与短事务写回、HNSW、Lexical Retrieval、RRF、Rerank、Evaluation、Citation、Router、只读 Tools、有界 Agent Loop、SSE、可靠性与可观测性。
+
+### 2026-09-05 18:05 交付完成，进入集中学习
+
+MVP 已交付：56 tests 全绿，八步演示脚本真实跑通，四路检索评测与行为评测结果落盘。以下是按真实调用链排的学习路线，每一站都给出对应文件和一个必须能自己答出来的问题。
+
+| # | 主题 | 主要文件 | 自测问题 |
+| --- | --- | --- | --- |
+| 1 | HTTP 入口与横切 | `RequestCorrelationFilter`、`ApiErrors`、`RequestGuard` | requestId 为什么不能直接信任客户端传入的头？限流为什么选固定窗口而不是令牌桶？ |
+| 2 | 路由 | `QueryRouter` + `QueryRouterTest` | 为什么企业事实信号必须先于"是什么"判断？顺序反了会出什么错？ |
+| 3 | 有界 Agent Loop | `BoundedAgentService`、`AgentBudget` | `loopTermination` 和 `terminalReason` 分别回答什么问题？为什么两者要分开？ |
+| 4 | 只读工具契约 | `DiagnosticTool`、`DiagnosticTools` | `ToolResult` 为什么在构造期就禁止非 SUCCESS 携带事实？这条约束替代了多少运行时检查？ |
+| 5 | 检索三路 | `PgVectorDenseRetriever`、`PostgresLexicalRetriever`、`HybridRetriever` | RRF 为什么能融合分数空间完全不同的两路结果？k=60 起什么作用？ |
+| 6 | 向量写入 | `DocumentEmbeddingService` | 为什么 embedding 必须在事务外算？短事务里核对 content hash 防的是哪个具体竞态？ |
+| 7 | 上下文与引用 | `RagService` | `REFERENCES_VALIDATED` 到底证明了什么、没证明什么？拒答检测为什么要放在引用校验之前？ |
+| 8 | 评测 | `RetrievalMetrics`、`EvaluationService`、`BehaviorEvaluationService` | nDCG 在二元相关性下退化成什么？为什么无答案题要保留原始结果但不计平均指标？ |
+| 9 | 可靠性 | `RequestGuard`、`RedisAgentRunRecorder`、`DiagnosisStreamController` | SSE 超时取消和客户端断开，哪个能真正停住在途模型调用？为什么？ |
+
+学习顺序建议按表格从上到下走一遍，每站先读测试再读实现——测试写明了这段代码真正保证了什么。
+
+后续 Agent 每完成一个模块，必须继续保留真实验证证据并更新 docs；不得因为改为 Agent 全量实现而把未验证能力写入简历。最终学习按“HTTP 请求 → Router/Agent → Tool/Retrieval → PostgreSQL/模型 → Citation/Evaluation”顺序进行。
+
 用户必须亲自手敲的范围只保留最能体现项目含金量的最小核心：
 
 - `Retriever` 的核心契约与最关键 Retrieval 数据模型

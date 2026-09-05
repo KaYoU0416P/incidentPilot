@@ -22,7 +22,7 @@ class DocumentContentHasher {
             digest.update(content);
         }
 
-        return HexFormat.of().formatHex(digest.digest());
+        return HexFormat.of().formatHex(digest.digest());// HexFormat把不好阅读的二进制 byte 数组转成十六进制字符串 SHA-256 最终会得到 64 个十六进制字符
     }
 
     private MessageDigest sha256Digest() {
@@ -34,6 +34,6 @@ class DocumentContentHasher {
     }
 
     private byte[] intBytes(int value) {
-        return ByteBuffer.allocate(Integer.BYTES).putInt(value).array();
+        return ByteBuffer.allocate(Integer.BYTES).putInt(value).array(); //这是把一个 Java int 转成 4 个字节
     }
 }

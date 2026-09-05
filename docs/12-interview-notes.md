@@ -93,3 +93,35 @@ Embedding 是网络模型调用，耗时和失败都不可控。若事务一直�
 按实现进度逐项深化，不提前堆八股：PostgreSQL vs MySQL、MVCC、JSONB、GIN、GiST、Full Text Search、`tsvector`、`tsquery`、pgvector、Vector Distance、HNSW、IVFFlat、Metadata Filter、Dense Retrieval、Lexical Retrieval、Hybrid Retrieval、RRF。
 
 其余待补充：Token、Context Window、Embedding、Chunking、真正的 BM25、Reranker、Parent-Child、Context Engineering、KV Cache、Citation、Evaluation、ReAct、MCP、Prompt Injection、Tool Security，以及 Redis/SSE/线程池/超时/重试/事务/缓存/Docker/Observability。
+
+
+## 双模型供应商接入（2026-09-05）
+
+- 调用链：业务 `TextEmbedder` / `AnswerGenerator` → Spring AI adapter → 各自供应商 HTTP API。框架类型留在 adapter，Retriever 和后续 Context Assembly 不依赖供应商 DTO。
+- DeepSeek 负责回答；百炼负责把查询与文档投射到相同向量空间。回答模型可以独立更换；更换 Embedding 模型需重建文档向量，不能只改查询端。
+- “1024 维”是本项目固定的 baseline 参数，不是质量最优结论。批量 Embedding 必须维护 input index 对应关系，否则向量可能错配到原文。
+- 2.0.1 的 OpenAI adapter 已使用官方 Java SDK，构造器使用 builder/options，不能照搬旧版路径和配置项。分别设置 base URL 与 key，防止供应商混接。
+- 已验证 Spring AI 真实请求和响应；尚不能说已完成向量入库、Dense RAG、Tool Calling 或 Hybrid。
+
+## 当前可陈述的项目能力（2026-09-05）
+
+- PostgreSQL 同时承载关系事实、JSONB、generated tsvector、pgvector(1024) 与 HNSW；Embedding 在事务外计算，短事务锁定 document 并核对 content hash 后批量写回。
+- Dense、PostgreSQL Lexical 与 RRF Hybrid 均通过自有 Retriever port。`demo-v1` 小型合成集上 Dense/Hybrid Recall@3、MRR@3、nDCG@3 为 1.0，Lexical 为 0.5；必须同时说明只有 6 文档、12 个可回答问题，不能称为生产准确率。
+- Retrieval RAG 使用编号证据块并校验模型引用是否属于本次上下文；无引用或未知引用降级为证据不足。这是引用存在性校验，不是语义事实证明。
+- Agent 使用可审计的确定性 Router、五个只读工具和有界循环：最多 5 步、重复签名检测。真实 HTTP 演示组合知识、历史事故、部署、服务状态和变更后生成诊断，并返回工具轨迹与 `ANSWERED` 终止原因。
+- 当前不能说：使用了 cross-encoder reranker、完成生产负载测试、实现模型自主规划、完成 Agent 逐句引用校验、已经上线生产。
+
+## 加固后新增的可陈述能力（2026-09-05 18:05）
+
+- Agent 预算是一等对象且可测试：总预算 20s、单工具 6s（超时 `Future.cancel(true)`）、回答预留 8s、上下文 6000 字符、单条事实 600 字符、动态事实时间窗口 90 天。`loopTermination` 回答"循环为什么停"，`terminalReason` 回答"这次运行的最终结论是什么"，两者分开是为了区分"预算耗尽但仍答了"和"预算耗尽所以没答"。
+- 工具状态区分 SUCCESS/EMPTY/SKIPPED_MISSING_PARAMETER/TIMEOUT/FAILED，`ToolResult` 在构造期就禁止非 SUCCESS 携带事实。首版把"serviceName 未提供"的提示文本当成有效事实喂给了模型，这是被这轮修掉的真实缺陷。
+- 引用校验的边界：`REFERENCES_VALIDATED` 只证明编号存在于本次上下文，不证明语义蕴含。行为评测实测到模型会一边说"证据不足"一边列出合法编号，因此拒答检测必须前置（ADR-011）。
+- Redis 承担运行状态（TTL 1h、不存回答正文）、固定窗口限流、在途并发控制，故障时 fail-open 并记录降级指标。真实 HTTP 验证：12 并发恰好 4 通过 8 个 429；同窗口 26 请求出现 6 个限流拒绝。
+- SSE emitter 超时会取消后台任务并归还并发许可，实测超时后 Redis 并发计数归零且 `rag.diagnosis` 无完成记录。要如实说明的边界：客户端中途断开若此刻没有写操作，要到下一次 `send` 才被发现，在途模型调用仍会跑完，只是结果被丢弃。
+
+### 高频追问准备
+
+- "你的 deadline 真的生效吗？"——首版不生效，只在工具之间检查。现在用步进 Clock 的单测证明预算耗尽会终止循环，用慢工具的单测证明单工具超时会被取消且后续工具仍能执行。
+- "限流为什么是固定窗口不是令牌桶？"——固定窗口能用 mock 完整单测、能用真实并发验证，实现成本低。代价是窗口边界可能出现两倍瞬时速率，这条写进了 ADR-010，面向公网要换滑动窗口。
+- "Redis 挂了会怎样？"——限流与并发控制 fail-open 并记录 `guard_degraded` 指标。本地单实例优先可用性；公网部署必须改 fail-closed。这是有意识的取舍，不是遗漏。
+- "怎么防提示注入？"——指令与数据分离、来源标记、引用必须属于本次上下文、显式拒答降级，加上文档注入与查询注入两个行为评测 case。但只有 6+1 份合成语料上的 6 个 case 通过，不能说"安全"。

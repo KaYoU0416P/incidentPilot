@@ -145,3 +145,64 @@ References:
 - https://github.com/pgvector/pgvector
 - https://docs.spring.io/spring-ai/reference/api/vectordbs/pgvector.html
 - https://documentation.red-gate.com/fd/postgresql-database-277579325.html
+
+
+## ADR-008: Separate Chat and Embedding providers
+
+Status: Accepted
+
+Context: 用户选用 DeepSeek 官方 API；Dense baseline 还需要独立 Embedding 服务。
+
+Decision: Chat 使用 DeepSeek `deepseek-v4-flash`；Embedding 使用阿里云百炼北京地域 `text-embedding-v4`，显式请求 1024 维。两家服务独立配置密钥与地址，框架接线由 Agent 完成，Retriever 核心仍由用户手敲。
+
+Trade-offs: 增加一份供应商配置，但避免本周部署本地推理服务。当前没有检索质量对照结果，不宣称该组合效果最优。文档与查询必须使用相同 Embedding 模型和维度；更换 Embedding 模型需要重建向量。模型别名可能更新，baseline 应记录调用日期与响应模型字段。
+
+Verification: 两个官方 HTTP 请求成功。DeepSeek 返回非空回答；百炼一次批量返回两条 1024 维、有限且非零的向量。百炼本次使用官方公共北京兼容地址 `https://dashscope.aliyuncs.com/compatible-mode/v1`；官方推荐后续采用业务空间专属域名，需获取真实 WorkspaceId 后配置。后续更新（2026-09-05）：Spring AI 2.0.1 接线及真实模型集成测试已通过；持久化、HNSW 与完整 RAG 仍未实现。
+
+References:
+
+- https://api-docs.deepseek.com/zh-cn/
+- https://help.aliyun.com/zh/model-studio/text-embedding-synchronous-api
+- https://help.aliyun.com/en/model-studio/embedding-interfaces-compatible-with-openai
+
+## ADR-009: Agent 预算建模为一等对象并强制传播
+
+Status: Accepted
+
+Context: 首版 Agent 只在两次工具调用之间检查 deadline，单次工具调用和最终回答可以任意超时；上下文只是无上限累加的 StringBuilder；工具缺少参数时返回的提示文本还会被当成有效事实交给模型。这些都是"看起来有约束、实际没有约束"。
+
+Decision: 引入 `AgentBudget`（max-steps / total-budget / tool-timeout / answer-reserve / context-chars / fact-chars / fact-lookback），每个工具与最终回答都在虚拟线程 executor 上执行并受 `Future.get(timeout)` 约束，超时 `cancel(true)`；工具结果引入 `ToolStatus`，只有 SUCCESS 的 `ToolFact` 能编号成证据。
+
+Reason: 预算必须能被测试证明。现在每一项都有对应断言：步进 Clock 证明预算耗尽会终止循环，慢工具证明单工具超时会被取消，超长事实证明上下文预算会截断，缺参数工具证明不会触库也不会变成证据。
+
+Alternatives: 只给外层加一个总超时（无法定位是哪一步超时，也无法在超时后保留部分轨迹）；用 Spring `@Async` + `@Transactional` 超时（覆盖不到模型 HTTP 调用）。
+
+Consequences: 构造函数参数变多、需要显式注入 executor 与 Clock；换来的是可审计的 `loopTermination` 与 `terminalReason`。预算是墙钟约束，工具线程被中断后底层驱动是否立即返回不由本项目保证，这一边界写入 `08-security-and-reliability.md`。
+
+## ADR-010: Redis 承担运行状态、限流与并发控制，故障时 fail-open
+
+Status: Accepted
+
+Context: 项目已有 Redis，但此前只做健康探活。需要可演示的可靠性控制，同时不能引入复杂分布式架构。
+
+Decision: Redis 承担三件事——`incidentpilot:agent:run:{runId}` 带 TTL 的运行状态（不持久化模型回答正文，只存元数据与工具轨迹）、按客户端 IP 的固定窗口限流、全局在途请求计数。三者都在 Redis 不可用时 fail-open，并记录 `incidentpilot.request.guard_degraded` 指标。
+
+Reason: 固定窗口与计数器实现简单、可用 mock 完整单测、可用真实 HTTP 并发验证，符合"选择简单、可测试的方案"的约束。运行状态不存回答正文，避免在缓存里复制模型输出。
+
+Alternatives: 令牌桶/滑动窗口（更平滑，但需要 Lua 脚本，测试成本高于本轮收益）；进程内 Semaphore（无法跨实例，也无法在演示中体现 Redis 的作用）；fail-closed（更安全，但本地演示时 Redis 抖动会直接让整个诊断链路不可用）。
+
+Consequences: 固定窗口在窗口边界可能出现两倍瞬时速率；fail-open 意味着 Redis 故障期间配额失效。两项都已登记，面向公网部署必须改为 fail-closed 并换成滑动窗口。
+
+## ADR-011: 显式拒答优先于引用编号存在性校验
+
+Status: Accepted
+
+Context: 行为评测第一次运行时，语料外问题的回答是"证据不足。提供的证据 [E1][E2][E3] 均为故障排查手册内容，未包含相关事件"。引用编号都合法存在，于是被判为 `REFERENCES_VALIDATED`——一次真实的误判。
+
+Decision: 在引用校验之前先匹配拒答措辞（`证据不足` / `无法回答` / `没有足够证据` 开头），命中即返回 `INSUFFICIENT` 并清空引用；Agent 侧同样处理，`terminalReason=MODEL_REFUSED`。
+
+Reason: 引用存在性只能证明编号来自本次上下文，不能证明模型在断言而不是在拒答。诊断场景下把拒答误报成"已校验引用"，比漏掉一个有效答案危险得多。
+
+Alternatives: 要求模型输出结构化 `{status, answer, citations}`（更准确，但需要为两个供应商分别验证 structured output 支持，超出本轮范围，列为后续项）；用 LLM-as-judge 判断是否拒答（引入 judge 偏差且成本翻倍）。
+
+Consequences: 模型若一边以"证据不足"开头、一边给出有效结论，也会被保守降级为证据不足。这是有意的保守取舍，已写入 `07-evaluation.md`。后续若改为结构化输出，本 ADR 可被取代。
